@@ -1,0 +1,174 @@
+<aside
+    class="d-flex flex-column align-items-center bg-secondary  mh-100 px-3 py-1 w-25"
+>
+    <div class="form-group d-flex flex-column gap-3 mb-3 mt-3 w-100">
+        <button
+            class="btn btn-lg btn-outline-info w-100"
+            id="dir"
+            type="submit"
+        >New folder</button>
+        <button
+            class="btn btn-lg btn-outline-info w-100"
+            id="file"
+            type="submit"
+        >New file</button>
+        {{#if (checkLength path)}}
+            <button
+                class="btn btn-lg btn-outline-info w-100"
+                id="change"
+                type="submit"
+            >Change name</button>
+        {{/if}}
+    </div>
+    <div class="w-100">
+        <form
+            action="/"
+            method="POST"
+            enctype="multipart/form-data"
+            class="input-group"
+        >
+            <input type="hidden" name="request" value="upload" />
+            <input
+                type="file"
+                class="form-control"
+                multiple
+                required
+                name="files"
+            />
+            <button
+                id="upload"
+                class="btn btn-info"
+                type="submit"
+            >Ok</button>
+        </form>
+    </div>
+</aside>
+<div>
+    <p class="h5 pt-3 ps-3 fw-normal text-info">
+        {{#each path}}
+            <a class="text-info" href="/?path={{this.path}}">{{this.name}}
+            </a>
+            /
+        {{/each}}
+    </p>
+    <div class="d-flex flex-wrap align-content-start">
+        {{#each data.dirs}}
+            <div class="custom-file me-3 mb-3 position-relative p-2">
+                <form
+                    action="/"
+                    method="POST"
+                    onsubmit="return confirmForm(this)"
+                    class="d-flex flex-column align-items-center"
+                >
+                    <input type="hidden" name="request" value="remove" />
+                    <a href="/?path={{this.path}}">
+                        <img
+                            width="50px"
+                            src="icons/dir-file.png"
+                            alt="folder image"
+                        />
+                        <p class="text-center text-dark">{{this.name}}</p>
+                    </a>
+                    <button
+                        type="submit"
+                        name="name"
+                        value="{{this.name}}"
+                        class="btn btn-link text-info position-absolute top-0 end-0"
+                        style="text-decoration: none;"
+                    >
+                        X
+                    </button>
+
+                </form>
+            </div>
+        {{/each}}
+        {{#each data.files}}
+            <div class="custom-file me-3 mb-3 position-relative p-2">
+                <form
+                    action="/"
+                    method="POST"
+                    class="d-flex flex-column align-items-center"
+                >
+                    <input type="hidden" name="request" value="edit" />
+                    <button
+                        style="border: none; background-color: transparent;"
+                        type="submit"
+                        name="name"
+                        value="{{this}}"
+                    >
+                        <img
+                            width="50px"
+                            src="icons/{{getExtension this}}-file.png"
+                            alt="file image"
+                        />
+                        <p class="text-center">{{this}}</p>
+                    </button>
+                </form>
+                <form
+                    action="/"
+                    method="POST"
+                    onsubmit="return confirmForm(this)"
+                    class="d-flex flex-column align-items-center"
+                >
+                    <input type="hidden" name="request" value="remove" />
+                    <button
+                        class="btn btn-link text-info position-absolute top-0 end-0"
+                        type="submit"
+                        name="name"
+                        value="{{this}}"
+                         style="text-decoration: none;"
+                    >
+                        X
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        {{/each}}
+    </div>
+</div>
+<dialog class="border-0 rounded">
+    <h2 class="display-5" id="submitHeading">Enter the name</h2>
+    <form method="POST" id="dialogForm">
+        <div class="input-group">
+            <input
+                type="text"
+                name="name"
+                class="form-control"
+                id="name"
+                pattern="^[^<>:&#147\/\\|?*\x00-\x1F]+[^ .\\\/&#147]$"
+                required
+            />
+            <div class="input-group-appended" id="extDiv">
+                <select
+                    name="extension"
+                    id="extSelect"
+                    class="form-select"
+                    style="border-top-left-radius: 0px !important; border-bottom-left-radius: 0px !important;"
+                >
+                    <option value=".txt" selected>.txt</option>
+                    <option value=".html">.html</option>
+                    <option value=".css">.css</option>
+                    <option value=".js">.js</option>
+                    <option value=".json">.json</option>
+                    <option value=".xml">.xml</option>
+                </select>
+            </div>
+        </div>
+        <div class="mt-2 d-flex gap-2 justify-content-end">
+            <button
+                type="submit"
+                name="request"
+                value=""
+                id="submit"
+                class="btn btn-sm btn-info"
+            >Confirm</button>
+            <button
+                type="button"
+                id="cancel"
+                class="btn btn-sm btn-outline-info"
+            >Cancel</button>
+        </div>
+    </form>
+</dialog>
+
+<script defer type="text/javascript" src="scripts/dialog.js"></script>
